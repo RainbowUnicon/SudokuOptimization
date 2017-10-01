@@ -1,8 +1,6 @@
 #include "Backtracking.h"
 #include <tuple>
 
-using namespace std;
-
 tuple<int,int> Backtracking::getNext(){
     for(int r=0; r< Sudoku::SIZE; r++){
         for(int c=0; c< Sudoku::SIZE; c++){

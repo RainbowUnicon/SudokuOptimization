@@ -2,6 +2,7 @@
 #define BACKTRACKING_H
 
 #include "Sudoku.h"
+using namespace std;
 
 class Backtracking{
     private:
