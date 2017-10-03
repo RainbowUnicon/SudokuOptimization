@@ -3,8 +3,10 @@
 #include <stdexcept>
 #include <string>
 
-#ifdef PROFILE_GPERF
+#if     defined PROFILE_GPERF
 #include <gperftools/profiler.h>
+#elif   defined PROFILE_VALGRIND
+#include <valgrind/callgrind.h>
 #endif
 
 #include "Algorithm.h"
@@ -30,10 +32,10 @@ const clock_t BEGIN = clock();
 #if   defined TIME
     //Do nothing
 #elif defined PROFILE_VALGRIND
-    //Do nothing
+    CALLGRIND_START_INSTRUMENTATION;
 #elif defined PROFILE_GPERF
     string currentTime =to_string(chrono::system_clock::now().time_since_epoch().count());  
-    string logName ="log/gperf/" + FILE_NAME + "_" + currentTime + ".log";  
+    string logName =string(argv[2]);
     ProfilerStart(logName.c_str());
 #elif defined CACHE
     //Do nothing
@@ -44,6 +46,7 @@ const clock_t BEGIN = clock();
 #if   defined TIME
     //Do nothing
 #elif defined PROFILE_VALGRIND
+    CALLGRIND_STOP_INSTRUMENTATION;
     //Do nothing
 #elif defined PROFILE_GPERF
     ProfilerStop();
@@ -53,12 +56,12 @@ const clock_t BEGIN = clock();
 
     const clock_t END = clock();
     const clock_t ELASPED = END - BEGIN;
-    cout << "Completed in " << ELASPED <<"\n";
+    cout << "Completed in " << ELASPED <<" microsec\n";
 
 #ifdef TIME
-    ofstream file("log/time_report.txt", ofstream::out | ofstream::app);
+    ofstream file(argv[2], ofstream::out | ofstream::app);
     if(file.is_open()){
-        file << FILE_NAME << " : " << (((double)ELASPED)/1000000) << " sec\n";
+        file << ELASPED << " microsec\n";
         file.close();
     }
 #endif
